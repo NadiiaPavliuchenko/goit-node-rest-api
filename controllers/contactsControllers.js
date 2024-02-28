@@ -1,6 +1,5 @@
 import contactsService from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
-import mongoose from "mongoose";
 
 export const getAllContacts = async (req, res, next) => {
   try {
@@ -13,9 +12,6 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      throw HttpError(404, "Not found");
-    }
     const contact = await contactsService.getContactById(req.params.id);
     if (!contact) {
       throw HttpError(404, "Not found");
@@ -49,9 +45,6 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      throw HttpError(404, "Not found");
-    }
     const updatedContact = await contactsService.updateContact(
       req.params.id,
       req.body
@@ -70,10 +63,6 @@ export const updateContact = async (req, res, next) => {
 
 export const updateStatusContact = async (req, res, next) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      throw HttpError(404, "Not found");
-    }
-
     const updatedStatus = await contactsService.updateStatusContact(
       req.params.id,
       req.body
