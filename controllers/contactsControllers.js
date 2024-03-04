@@ -3,7 +3,21 @@ import HttpError from "../helpers/HttpError.js";
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const favorite = req.query.favorite;
+    if (favorite === "") {
+      throw HttpError(404, "Not found");
+    }
+    const { page, limit } = req.query;
+    if (page === "" || limit === "") {
+      throw HttpError(404, "Not found");
+    }
+    const user = req.user;
+    const contacts = await contactsService.listContacts({
+      user,
+      favorite,
+      page,
+      limit,
+    });
     res.send(contacts);
   } catch (e) {
     next(e);
@@ -12,7 +26,10 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
-    const contact = await contactsService.getContactById(req.params.id);
+    const contact = await contactsService.getContactById(
+      req.params.id,
+      req.user
+    );
     if (!contact) {
       throw HttpError(404, "Not found");
     }
@@ -24,7 +41,10 @@ export const getOneContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
   try {
-    const contact = await contactsService.removeContact(req.params.id);
+    const contact = await contactsService.removeContact(
+      req.params.id,
+      req.user
+    );
     if (!contact) {
       throw HttpError(404, "Not found");
     }
@@ -36,7 +56,7 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    const newContact = await contactsService.addContact(req.body);
+    const newContact = await contactsService.addContact(req.body, req.user);
     res.status(201).send(newContact);
   } catch (e) {
     next(e);
@@ -47,7 +67,8 @@ export const updateContact = async (req, res, next) => {
   try {
     const updatedContact = await contactsService.updateContact(
       req.params.id,
-      req.body
+      req.body,
+      req.user
     );
     if (!updatedContact) {
       throw HttpError(404, "Not found");
@@ -65,7 +86,8 @@ export const updateStatusContact = async (req, res, next) => {
   try {
     const updatedStatus = await contactsService.updateStatusContact(
       req.params.id,
-      req.body
+      req.body,
+      req.user
     );
     if (!updatedStatus) {
       throw HttpError(404, "Not found");
