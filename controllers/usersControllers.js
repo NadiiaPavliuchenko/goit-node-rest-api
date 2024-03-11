@@ -68,3 +68,15 @@ export const updateSubscription = async (req, res, next) => {
     next(e);
   }
 };
+
+export const uploadAvatar = async (req, res, next) => {
+  try {
+    const newAvatar = await usersService.updateAvatar(req.user, req.file);
+    if (newAvatar === null) {
+      throw HttpError(401, "Unauthorized");
+    }
+    res.send(newAvatar);
+  } catch (e) {
+    next(e);
+  }
+};
