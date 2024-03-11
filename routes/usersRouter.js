@@ -11,7 +11,9 @@ import {
   logoutUser,
   getCurrentUser,
   updateSubscription,
+  uploadAvatar,
 } from "../controllers/usersControllers.js";
+import upload from "../helpers/upload.js";
 
 const usersRouter = express.Router();
 
@@ -24,6 +26,12 @@ usersRouter.patch(
   validateToken,
   validateBody(updateSubscriptionSchema),
   updateSubscription
+);
+usersRouter.patch(
+  "/avatars",
+  validateToken,
+  upload.single("avatar"),
+  uploadAvatar
 );
 
 export default usersRouter;
