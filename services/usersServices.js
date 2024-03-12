@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
 import Jimp from "jimp";
 import * as Path from "node:path";
+import fs from "fs";
 
 const saltRounds = 10;
 
@@ -83,6 +84,10 @@ async function updateAvatar({ id }, { path }) {
   await avatar.resize(250, 250);
   const avatarFilename = Date.now() + Path.extname(path);
   await avatar.writeAsync(`public/avatars/${avatarFilename}`);
+  fs.unlink(path, function (err) {
+    if (err) return console.log(err);
+    console.log("file deleted successfully");
+  });
   const normalizedAvatar = `/avatars/${avatarFilename}`;
 
   const updatedUser = await User.findByIdAndUpdate(
