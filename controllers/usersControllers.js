@@ -83,3 +83,29 @@ export const uploadAvatar = async (req, res, next) => {
     next(e);
   }
 };
+
+export const verifyUser = async (req, res, next) => {
+  try {
+    const verifiedUser = await usersService.verifyUser(
+      req.params.verificationToken
+    );
+    if (verifiedUser === null) {
+      throw HttpError(404, "Not found");
+    }
+    res.send(verifiedUser);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const resendEmail = async (req, res, next) => {
+  try {
+    const newLink = await usersService.resendEmail(req.body.email);
+    if (newLink === null) {
+      res.status(400).json({ message: "Verification has already been passed" });
+    }
+    res.send(newLink);
+  } catch (e) {
+    next(e);
+  }
+};

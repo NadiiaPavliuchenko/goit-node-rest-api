@@ -4,6 +4,7 @@ import validateToken from "../helpers/validateToken.js";
 import {
   createUserSchema,
   updateSubscriptionSchema,
+  resendVerificationEmailSchema,
 } from "../schemas/usersSchemas.js";
 import {
   registerUser,
@@ -12,6 +13,8 @@ import {
   getCurrentUser,
   updateSubscription,
   uploadAvatar,
+  verifyUser,
+  resendEmail,
 } from "../controllers/usersControllers.js";
 import upload from "../helpers/upload.js";
 
@@ -32,6 +35,12 @@ usersRouter.patch(
   validateToken,
   upload.single("avatar"),
   uploadAvatar
+);
+usersRouter.get("/verify/:verificationToken", verifyUser);
+usersRouter.post(
+  "/verify",
+  validateBody(resendVerificationEmailSchema),
+  resendEmail
 );
 
 export default usersRouter;
