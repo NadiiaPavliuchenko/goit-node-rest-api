@@ -7,6 +7,7 @@ import * as Path from "node:path";
 import fs from "fs";
 import nodemailer from "nodemailer";
 import { v4 as uuid } from "uuid";
+import HttpError from "../helpers/HttpError.js";
 
 const transporter = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
@@ -56,6 +57,9 @@ async function loginUser({ email, password }) {
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     return null;
+  }
+  if (user.verify === false) {
+    throw HttpError(401, "Your account is not verified");
   }
   const payload = { id: user._id, email, password };
   const secret = process.env.SECRET;
