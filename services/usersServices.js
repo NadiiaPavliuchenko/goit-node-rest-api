@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import { User } from "../models/users.js";
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
