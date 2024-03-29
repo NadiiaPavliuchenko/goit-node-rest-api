@@ -14,6 +14,8 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+console.log("come changes");
+
 app.use("/api/contacts", validateToken, contactsRouter);
 app.use("/api/users", usersRouter);
 
