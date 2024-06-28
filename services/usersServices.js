@@ -9,13 +9,17 @@ import nodemailer from "nodemailer";
 import { v4 as uuid } from "uuid";
 import HttpError from "../helpers/HttpError.js";
 
+const { UKRNET_EMAIL, UKRNET_PASSWORD } = process.env;
+
 const transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
+  host: "smtp.ukr.net",
   port: 2525,
+  secure: true,
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASSWORD,
+    user: UKRNET_EMAIL,
+    pass: UKRNET_PASSWORD,
   },
+  tls: { rejectUnauthorized: false },
 });
 
 const saltRounds = 10;
@@ -30,11 +34,11 @@ async function registerUser({ password, email, subscription }) {
   const verificationToken = uuid();
 
   await transporter.sendMail({
-    from: "n.pavljuchenko@gmail.com",
+    from: UKRNET_EMAIL,
     to: email,
     subject: "Welcome to phonebook app",
-    text: `To confirm you registration please click on the <a href="http://localhost:3000/api/users/verify/${verificationToken}">link</a>`,
-    html: `To confirm you registration please click on the <a href="http://localhost:3000/api/users/verify/${verificationToken}">link</a>`,
+    text: `To confirm you registration please click on the <a href="https://nadiiapavliuchenko.github.io/Phonebook/verify/${verificationToken}">link</a>`,
+    html: `To confirm you registration please click on the <a href="https://nadiiapavliuchenko.github.io/Phonebook/verify/${verificationToken}">link</a>`,
   });
 
   const newUser = await User.create({
@@ -128,12 +132,10 @@ async function updateAvatar({ id }, { path }) {
 async function verifyUser(verificationToken) {
   const userToVerify = await User.findOne({ verificationToken });
   if (userToVerify === null) {
-    return null;
+    return false;
   }
   await userToVerify.updateOne({ verificationToken: null, verify: true });
-  return {
-    message: "Verification successful",
-  };
+  return true;
 }
 
 async function resendEmail(email) {
