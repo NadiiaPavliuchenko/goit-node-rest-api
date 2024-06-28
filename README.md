@@ -18,6 +18,7 @@ The Phonebook API is a backend service that provides endpoints for managing cont
 - Express
 - MongoDB
 - Mongoose
+- Nodemailer
 - JWT (JSON Web Tokens) for authentication
 - Joi for input validation
 
